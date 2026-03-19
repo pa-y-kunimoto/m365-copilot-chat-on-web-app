@@ -1,0 +1,23 @@
+{
+  "name": "@m365-copilot-chat/server-mediated-backend",
+  "version": "0.0.1",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "start": "node src/server.js",
+    "dev": "node --watch src/server.js",
+    "dev:mock": "MOCK_MODE=true node --watch src/server.js",
+    "test": "vitest run"
+  },
+  "dependencies": {
+    "express": "^4.21.2",
+    "@azure/msal-node": "^3.0.0",
+    "express-session": "^1.18.1",
+    "cors": "^2.8.5",
+    "msw": "^2.7.0"
+  },
+  "devDependencies": {
+    "supertest": "^7.0.0",
+    "vitest": "^4.1.0"
+  }
+}
