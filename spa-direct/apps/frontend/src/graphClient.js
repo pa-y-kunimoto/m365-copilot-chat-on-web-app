@@ -15,7 +15,12 @@ export async function createConversation(accessToken) {
   return res.json();
 }
 
-export async function sendMessage(accessToken, conversationId, text, timeZone = "Asia/Tokyo") {
+export async function sendMessage(
+  accessToken,
+  conversationId,
+  text,
+  timeZone = Intl.DateTimeFormat().resolvedOptions().timeZone
+) {
   const res = await fetch(`${GRAPH_BASE}/conversations/${conversationId}/chat`, {
     method: "POST",
     headers: {

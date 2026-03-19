@@ -1,8 +1,6 @@
 services:
   backend:
     build: ./apps/backend
-    ports:
-      - "3000:3000"
 
   frontend:
     build:
@@ -12,6 +10,6 @@ services:
         VITE_AZURE_TENANT_ID: ${VITE_AZURE_TENANT_ID:-}
         VITE_MOCK_MODE: ${VITE_MOCK_MODE:-true}
     ports:
-      - "8080:80"
+      - "3000:80"
     depends_on:
       - backend

@@ -26,7 +26,9 @@ export function useChat() {
       const token = await acquireToken();
       messages.value.push({ role: "user", text });
       const response = await graphSendMessage(token, currentConversationId.value, text);
-      const assistantMessage = response.messages?.find((m) => m.id !== response.messages[0]?.id);
+      const responseMessages = response.messages ?? [];
+      const assistantMessage =
+        responseMessages.length > 1 ? responseMessages[responseMessages.length - 1] : null;
       if (assistantMessage) {
         messages.value.push({ role: "assistant", text: assistantMessage.text });
       }

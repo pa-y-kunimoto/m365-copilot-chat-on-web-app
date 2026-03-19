@@ -102,7 +102,7 @@ describe("useAuth (PKCE)", () => {
       mockAcquireTokenSilent.mockRejectedValue(new Error("interaction_required"));
 
       const { acquireToken } = useAuth();
-      await acquireToken();
+      await expect(acquireToken()).rejects.toThrow("Redirecting for token acquisition");
 
       expect(mockAcquireTokenRedirect).toHaveBeenCalled();
     });

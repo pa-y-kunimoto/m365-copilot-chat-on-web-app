@@ -24,11 +24,13 @@ export function useChat() {
       messages.value.push({ role: "user", text });
       const res = await post(`/api/conversations/${currentConversationId.value}/chat`, {
         text,
-        timeZone: "Asia/Tokyo",
+        timeZone: Intl.DateTimeFormat().resolvedOptions().timeZone,
       });
       if (!res.ok) throw new Error("Failed to send message");
       const data = await res.json();
-      const assistantMessage = data.messages?.find((m) => m.id !== data.messages[0]?.id);
+      const responseMessages = data.messages ?? [];
+      const assistantMessage =
+        responseMessages.length > 1 ? responseMessages[responseMessages.length - 1] : null;
       if (assistantMessage) {
         messages.value.push({ role: "assistant", text: assistantMessage.text });
       }
