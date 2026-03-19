@@ -1,0 +1,21 @@
+{
+  "name": "@m365-copilot-chat/backend",
+  "version": "0.0.1",
+  "private": true,
+  "description": "Express.js backend for M365 Copilot Chat",
+  "type": "module",
+  "main": "src/index.js",
+  "scripts": {
+    "start": "node src/index.js",
+    "dev": "node --watch src/index.js",
+    "test": "vitest run",
+    "test:watch": "vitest"
+  },
+  "dependencies": {
+    "express": "^4.21.2"
+  },
+  "devDependencies": {
+    "supertest": "^7.0.0",
+    "vitest": "^4.1.0"
+  }
+}
