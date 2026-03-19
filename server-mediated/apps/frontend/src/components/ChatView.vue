@@ -1,5 +1,5 @@
 <script setup>
-import { ref, nextTick, watch } from "vue";
+import { nextTick, ref, watch } from "vue";
 import { useChat } from "../composables/useChat.js";
 import MessageBubble from "./MessageBubble.vue";
 
@@ -21,7 +21,7 @@ watch(
     if (messagesContainer.value) {
       messagesContainer.value.scrollTop = messagesContainer.value.scrollHeight;
     }
-  },
+  }
 );
 </script>
 

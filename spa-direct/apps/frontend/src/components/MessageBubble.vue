@@ -1,6 +1,6 @@
 <script setup>
-import { computed } from "vue";
 import { marked } from "marked";
+import { computed } from "vue";
 
 const props = defineProps({
   role: {
