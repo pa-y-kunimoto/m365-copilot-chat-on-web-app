@@ -1,4 +1,3 @@
-import { ConfidentialClientApplication } from "@azure/msal-node";
 import { Router } from "express";
 import { getAccount, saveTokens } from "../services/tokenStore.js";
 
@@ -12,8 +11,13 @@ const graphScopes = [
   "ExternalItem.Read.All",
 ];
 
-export function createAuthRouter(options = {}) {
+const isMockMode = process.env.MOCK_MODE === "true";
+
+async function createRealAuthRouter(options) {
   const router = Router();
+
+  // MSAL は実モードでのみ import（モック時に不要な依存を避ける）
+  const { ConfidentialClientApplication } = await import("@azure/msal-node");
 
   const msalConfig = {
     auth: {
@@ -53,6 +57,36 @@ export function createAuthRouter(options = {}) {
     }
   });
 
+  return router;
+}
+
+function createMockAuthRouter() {
+  const router = Router();
+
+  // モック: Azure AD リダイレクトをスキップし、即座にセッションに保存
+  router.get("/login", (req, res) => {
+    saveTokens(req.session, {
+      accessToken: "mock-access-token",
+      account: { name: "Mock User", username: "mock@example.com" },
+    });
+    res.redirect("/");
+  });
+
+  router.get("/callback", (_req, res) => {
+    res.redirect("/");
+  });
+
+  return router;
+}
+
+export async function createAuthRouter(options = {}) {
+  const router = Router();
+
+  // 認証ルート（モード切替）
+  const authRouter = isMockMode ? createMockAuthRouter() : await createRealAuthRouter(options);
+  router.use(authRouter);
+
+  // 共通ルート
   router.post("/logout", (req, res) => {
     req.session.destroy(() => {
       res.json({ success: true });

@@ -13,7 +13,7 @@ export function startServer(app, port = PORT) {
   });
 }
 
-const app = createApp({
+const app = await createApp({
   sessionSecret: process.env.SESSION_SECRET || "dev-secret",
   clientId: process.env.AZURE_CLIENT_ID,
   clientSecret: process.env.AZURE_CLIENT_SECRET,

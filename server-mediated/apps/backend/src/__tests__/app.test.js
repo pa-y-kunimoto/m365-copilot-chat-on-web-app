@@ -1,5 +1,5 @@
 import request from "supertest";
-import { describe, expect, it, vi } from "vitest";
+import { beforeAll, describe, expect, it, vi } from "vitest";
 import { createApp } from "../app.js";
 
 vi.mock("@azure/msal-node", () => ({
@@ -13,7 +13,11 @@ vi.mock("@azure/msal-node", () => ({
 }));
 
 describe("server-mediated backend", () => {
-  const app = createApp({ sessionSecret: "test-secret" });
+  let app;
+
+  beforeAll(async () => {
+    app = await createApp({ sessionSecret: "test-secret" });
+  });
 
   it("GET /health returns { status: 'ok' }", async () => {
     const res = await request(app).get("/health");
