@@ -1,5 +1,5 @@
 ---
-mode: ask
+mode: agent
 description: 新しい実装パターンをモノレポに追加する手順をガイドします
 ---
 
