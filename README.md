@@ -126,12 +126,6 @@ npm run dev --workspace=spa-direct/apps/frontend
 
 ---
 
-## 新しいパターンを追加する方法
-
-詳細な手順は **[docs/how-to-add-pattern.md](docs/how-to-add-pattern.md)** を参照してください。
-
----
-
 ## TDD ワークフロー（古典派）
 
 本プロジェクトでは **Red → Green → Refactor** サイクルで開発します。
