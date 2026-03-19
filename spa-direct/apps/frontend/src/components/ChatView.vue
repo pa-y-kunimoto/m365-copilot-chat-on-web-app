@@ -64,7 +64,8 @@ watch(
   display: flex;
   flex-direction: column;
   height: calc(100vh - 80px);
-  max-width: 800px;
+  min-width: 800px;
+  max-width: 1000px;
   margin: 0 auto;
   background: #fff;
   border-radius: 12px;
