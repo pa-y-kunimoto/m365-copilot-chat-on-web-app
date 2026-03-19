@@ -204,6 +204,44 @@ Delegated 権限のみサポートされるため、以下の2つのフローが
 - Client Secret を使用可能（Confidential Client）
 - リフレッシュトークンによるサイレント更新が可能
 
+## アクセストークンの寿命設定
+
+Entra ID の `TokenLifetimePolicy` を使うことで、アクセストークンの寿命をカスタマイズできる。
+
+| 項目 | 値 |
+|------|------|
+| デフォルト | 60〜90 分（ランダム、平均 75 分） |
+| 最小 | **10 分** |
+| 最大 | 1 日（24 時間） |
+| 必要ライセンス | **Microsoft Entra ID P1** |
+
+### 設定方法（PowerShell）
+
+```powershell
+# 例: アクセストークンを 10 分に短縮するポリシーを作成
+New-MgPolicyTokenLifetimePolicy -Definition @(
+  '{"TokenLifetimePolicy":{"Version":1,"AccessTokenLifetime":"00:10:00"}}'
+) -DisplayName "ShortLivedTokenPolicy"
+
+# アプリにポリシーを紐づけ
+New-MgApplicationTokenLifetimePolicyByRef -ApplicationId <app-object-id> -BodyParameter @{
+  "@odata.id" = "https://graph.microsoft.com/v1.0/policies/tokenLifetimePolicies/<policy-id>"
+}
+```
+
+### 注意点
+
+- **アプリ側のコード変更は不要** — ポリシーは Entra ID 側の設定で、トークン発行時に自動適用される
+- **トークン短縮はトレードオフ** — 短くすると `acquireTokenSilent()` の頻度が上がり、UX に影響する可能性がある
+- **SPA（Implicit Flow）ではリフレッシュトークンが制限される**ため、サイレント更新は hidden iframe で行われるが制約がある
+- **トークンが漏洩した場合の被害を時間的に抑える効果はある**が、ブラウザにトークンが露出する根本的なリスクは解消されない
+- セキュリティを重視する場合は、トークン寿命の短縮よりも **server-mediated パターン（バックエンド経由）** の採用が本質的な解決策となる
+
+### 参考
+
+- [Configurable token lifetimes](https://learn.microsoft.com/en-us/entra/identity-platform/configurable-token-lifetimes)
+- [Configure token lifetimes](https://learn.microsoft.com/en-us/entra/identity-platform/configure-token-lifetimes)
+
 ## 参考リンク
 
 - [M365 Copilot Chat API Overview](https://learn.microsoft.com/en-us/microsoft-365-copilot/extensibility/api/ai-services/chat/overview)
