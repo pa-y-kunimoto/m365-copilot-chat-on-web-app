@@ -1,0 +1,12 @@
+{
+  "name": "@m365-copilot-chat/pattern-a",
+  "version": "0.0.1",
+  "private": true,
+  "description": "Pattern A — Express.js backend + Vue.js frontend",
+  "scripts": {
+    "dev:backend": "npm run dev --workspace=patternA/apps/backend",
+    "dev:frontend": "npm run dev --workspace=patternA/apps/frontend",
+    "test": "npm test --workspace=patternA/apps/backend --workspace=patternA/apps/frontend",
+    "build": "npm run build --workspace=patternA/apps/frontend"
+  }
+}

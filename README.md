@@ -2,6 +2,8 @@
 
 M365 Copilot Chat on Web App — monorepo
 
+同一のユースケースに対して複数の実装パターン（`patternA`, `patternB`, …）を並走させ、比較・評価するためのモノレポです。
+
 ## 技術スタック
 
 | 役割 | ライブラリ / ツール |
@@ -20,21 +22,26 @@ M365 Copilot Chat on Web App — monorepo
 
 ```
 m365-copilot-chat-on-web-app/
-├── package.json          # ルート（workspaces 定義・Volta ピン・共通スクリプト）
+├── package.json              # ルート（workspaces 定義・Volta ピン・共通スクリプト）
 ├── package-lock.json
-├── biome.json            # Biome（lint / format）共通設定
+├── biome.json                # Biome（lint / format）共通設定
 ├── .github/
+│   ├── copilot-instructions.md  # GitHub Copilot カスタム指示
+│   ├── prompts/                 # 再利用可能なプロンプト
+│   │   └── add-pattern.prompt.md
 │   └── workflows/
-│       └── ci.yml        # CI パイプライン
-└── packages/
-    ├── backend/          # Express.js バックエンドパッケージ
-    │   ├── package.json
-    │   └── src/          # 実装コードをここに追加
-    └── frontend/         # Vue.js フロントエンドパッケージ
-        ├── package.json
-        ├── vite.config.js
-        └── src/          # 実装コードをここに追加
+│       └── ci.yml            # CI パイプライン
+└── patternA/                 # 実装パターン A（Express.js + Vue.js）
+    ├── package.json          # パターン単位のスクリプト集約
+    └── apps/
+        ├── backend/          # Express.js バックエンド
+        │   └── package.json
+        └── frontend/         # Vue.js フロントエンド
+            ├── package.json
+            └── vite.config.js
 ```
+
+新しいパターンは `patternB/`, `patternC/` のようにルート直下にディレクトリを追加します。
 
 ---
 
@@ -51,7 +58,7 @@ m365-copilot-chat-on-web-app/
 npm install
 ```
 
-ルートで実行すると、全ワークスペース（`packages/*`）の依存関係が一括でインストールされます。
+ルートで実行すると、全ワークスペースの依存関係が一括でインストールされます。
 
 ---
 
@@ -65,31 +72,65 @@ npm install
 | `npm run lint:fix` | Biome で lint チェック＋自動修正 |
 | `npm run format` | Biome でフォーマット |
 
-特定のパッケージのみ操作したい場合は `--workspace` オプションを使います。
+特定のパターン・パッケージのみ操作したい場合は `--workspace` オプションを使います。
 
 ```bash
-npm run test --workspace=packages/backend
-npm run test --workspace=packages/frontend
-npm run dev --workspace=packages/frontend
+# patternA のバックエンドをテスト
+npm test --workspace=patternA/apps/backend
+
+# patternA のフロントエンドをテスト
+npm test --workspace=patternA/apps/frontend
+
+# patternA のフロントエンド開発サーバーを起動
+npm run dev --workspace=patternA/apps/frontend
 ```
 
 ---
 
-## 新しいパッケージを追加する方法
+## 新しいパターンを追加する方法
 
-### 1. Express.js（バックエンド）パッケージを追加する
-
-#### 1-1. ディレクトリとファイルを作成する
+### 1. ディレクトリと `package.json` を作成する
 
 ```bash
-mkdir -p packages/<package-name>/src/__tests__
+mkdir -p patternB/apps/backend
+mkdir -p patternB/apps/frontend
 ```
 
-`packages/<package-name>/package.json` を作成します。
+`patternB/package.json` を作成します（パターン単位のスクリプト集約）。
 
 ```json
 {
-  "name": "@m365-copilot-chat/<package-name>",
+  "name": "@m365-copilot-chat/pattern-b",
+  "version": "0.0.1",
+  "private": true,
+  "description": "Pattern B — [技術スタックの説明]",
+  "scripts": {
+    "dev:backend": "npm run dev --workspace=patternB/apps/backend",
+    "dev:frontend": "npm run dev --workspace=patternB/apps/frontend",
+    "test": "npm test --workspace=patternB/apps/backend --workspace=patternB/apps/frontend",
+    "build": "npm run build --workspace=patternB/apps/frontend"
+  }
+}
+```
+
+### 2. ルートの `package.json` の `workspaces` を更新する
+
+```json
+{
+  "workspaces": [
+    "patternA", "patternA/apps/*",
+    "patternB", "patternB/apps/*"
+  ]
+}
+```
+
+### 3. バックエンドパッケージを追加する（TDD）
+
+`patternB/apps/backend/package.json` を作成します。
+
+```json
+{
+  "name": "@m365-copilot-chat/pattern-b-backend",
   "version": "0.0.1",
   "private": true,
   "type": "module",
@@ -110,9 +151,7 @@ mkdir -p packages/<package-name>/src/__tests__
 }
 ```
 
-#### 1-2. アプリ本体を実装する（TDD: まずテストを書く）
-
-テスト `packages/<package-name>/src/__tests__/index.test.js` を先に作成し、Red 状態を確認します。
+TDD でまずテスト `patternB/apps/backend/src/__tests__/index.test.js` を書きます（Red）。
 
 ```js
 import request from "supertest";
@@ -129,7 +168,7 @@ describe("GET /health", () => {
 });
 ```
 
-次に `packages/<package-name>/src/index.js` を実装して Green にします。
+次に `patternB/apps/backend/src/index.js` を実装して Green にします。
 
 ```js
 import express from "express";
@@ -156,33 +195,13 @@ export function startServer(port = 3000) {
 }
 ```
 
-#### 1-3. 依存関係をインストールする
+### 4. フロントエンドパッケージを追加する（TDD）
 
-```bash
-npm install
-```
-
-#### 1-4. テストを実行して Green を確認する
-
-```bash
-npm run test --workspace=packages/<package-name>
-```
-
----
-
-### 2. Vue.js（フロントエンド）パッケージを追加する
-
-#### 2-1. ディレクトリとファイルを作成する
-
-```bash
-mkdir -p packages/<package-name>/src/__tests__
-```
-
-`packages/<package-name>/package.json` を作成します。
+`patternB/apps/frontend/package.json` を作成します。
 
 ```json
 {
-  "name": "@m365-copilot-chat/<package-name>",
+  "name": "@m365-copilot-chat/pattern-b-frontend",
   "version": "0.0.1",
   "private": true,
   "type": "module",
@@ -206,7 +225,7 @@ mkdir -p packages/<package-name>/src/__tests__
 }
 ```
 
-`packages/<package-name>/vite.config.js` を作成します。
+`patternB/apps/frontend/vite.config.js` を作成します。
 
 ```js
 import vue from "@vitejs/plugin-vue";
@@ -221,7 +240,7 @@ export default defineConfig({
 });
 ```
 
-`packages/<package-name>/index.html` を作成します。
+`patternB/apps/frontend/index.html` を作成します。
 
 ```html
 <!doctype html>
@@ -238,9 +257,7 @@ export default defineConfig({
 </html>
 ```
 
-#### 2-2. コンポーネントを実装する（TDD: まずテストを書く）
-
-テスト `packages/<package-name>/src/__tests__/App.test.js` を先に作成し、Red 状態を確認します。
+TDD でまずテスト `patternB/apps/frontend/src/__tests__/App.test.js` を書きます（Red）。
 
 ```js
 import { mount } from "@vue/test-utils";
@@ -256,7 +273,7 @@ describe("App", () => {
 });
 ```
 
-次に `packages/<package-name>/src/App.vue` を実装して Green にします。
+次に `patternB/apps/frontend/src/App.vue` を実装して Green にします。
 
 ```vue
 <template>
@@ -270,7 +287,7 @@ const title = "M365 Copilot Chat";
 </script>
 ```
 
-`packages/<package-name>/src/main.js` も作成します。
+`patternB/apps/frontend/src/main.js` も作成します。
 
 ```js
 import { createApp } from "vue";
@@ -279,23 +296,36 @@ import App from "./App.vue";
 createApp(App).mount("#app");
 ```
 
-#### 2-3. 依存関係をインストールする
+### 5. 依存関係をインストールして Green を確認する
 
 ```bash
 npm install
+
+npm test --workspace=patternB/apps/backend
+npm test --workspace=patternB/apps/frontend
 ```
 
-#### 2-4. テストを実行して Green を確認する
+### 6. CI ジョブを追加する
 
-```bash
-npm run test --workspace=packages/<package-name>
+`.github/workflows/ci.yml` の既存ジョブをコピーして `patternB` 向けに書き換えます。
+
+```yaml
+test-pattern-b-backend:
+  name: Test (patternB/backend)
+  runs-on: ubuntu-latest
+  permissions:
+    contents: read
+  steps:
+    - uses: actions/checkout@v4
+    - uses: actions/setup-node@v4
+      with:
+        node-version-file: "package.json"
+        cache: "npm"
+    - run: npm ci
+    - run: npm test --workspace=patternB/apps/backend
 ```
 
-#### 2-5. 開発サーバーを起動する
-
-```bash
-npm run dev --workspace=packages/<package-name>
-```
+> 💡 **ヒント**: VS Code で `.github/prompts/add-pattern.prompt.md` を Copilot Chat に読み込むと、手順を対話的にガイドしてもらえます。
 
 ---
 
@@ -329,7 +359,7 @@ npm run lint:fix
 npm run format
 ```
 
-設定は `biome.json`（ルート）で管理されており、全パッケージに一括適用されます。
+設定は `biome.json`（ルート）で管理されており、全パターン・全パッケージに一括適用されます。
 
 ---
 
@@ -345,6 +375,8 @@ lint ──┬── test-backend  ───────────────
 | ジョブ | 内容 |
 |--------|------|
 | `lint` | Biome によるコード品質チェック |
-| `test-backend` | バックエンドパッケージのテスト |
-| `test-frontend` | フロントエンドパッケージのテスト |
-| `build-frontend` | フロントエンドのプロダクションビルド（lint・test-frontend 成功後に実行） |
+| `test-backend` | `patternA` バックエンドのテスト |
+| `test-frontend` | `patternA` フロントエンドのテスト |
+| `build-frontend` | `patternA` フロントエンドのプロダクションビルド（lint・test-frontend 成功後に実行） |
+
+新しいパターンを追加したら、対応するジョブを CI に追記してください。

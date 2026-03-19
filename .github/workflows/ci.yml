@@ -45,7 +45,7 @@ jobs:
         run: npm ci
 
       - name: Test
-        run: npm run test --workspace=packages/backend
+        run: npm run test --workspace=patternA/apps/backend
 
   test-frontend:
     name: Test (frontend)
@@ -65,7 +65,7 @@ jobs:
         run: npm ci
 
       - name: Test
-        run: npm run test --workspace=packages/frontend
+        run: npm run test --workspace=patternA/apps/frontend
 
   build-frontend:
     name: Build (frontend)
@@ -86,4 +86,4 @@ jobs:
         run: npm ci
 
       - name: Build
-        run: npm run build --workspace=packages/frontend
+        run: npm run build --workspace=patternA/apps/frontend

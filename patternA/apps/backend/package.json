@@ -1,8 +1,8 @@
 {
-  "name": "@m365-copilot-chat/backend",
+  "name": "@m365-copilot-chat/pattern-a-backend",
   "version": "0.0.1",
   "private": true,
-  "description": "Express.js backend for M365 Copilot Chat",
+  "description": "Express.js backend for M365 Copilot Chat (Pattern A)",
   "type": "module",
   "main": "src/index.js",
   "scripts": {

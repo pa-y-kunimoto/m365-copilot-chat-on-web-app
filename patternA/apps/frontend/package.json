@@ -1,8 +1,8 @@
 {
-  "name": "@m365-copilot-chat/frontend",
+  "name": "@m365-copilot-chat/pattern-a-frontend",
   "version": "0.0.1",
   "private": true,
-  "description": "Vue.js frontend for M365 Copilot Chat",
+  "description": "Vue.js frontend for M365 Copilot Chat (Pattern A)",
   "type": "module",
   "scripts": {
     "dev": "vite",
