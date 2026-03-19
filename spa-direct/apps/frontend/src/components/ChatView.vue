@@ -1,6 +1,6 @@
 <script setup>
 import { ref } from "vue";
-import { useChat } from "../composables/useChat.js";
+import { useChat } from "../composables/index.js";
 import MessageBubble from "./MessageBubble.vue";
 
 const { messages, isLoading, sendMessage } = useChat();

@@ -10,6 +10,7 @@ COPY src/ ./src/
 
 ARG VITE_AZURE_CLIENT_ID
 ARG VITE_AZURE_TENANT_ID
+ARG VITE_MOCK_MODE=true
 RUN npm run build
 
 FROM nginx:alpine

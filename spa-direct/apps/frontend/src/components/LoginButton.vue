@@ -1,5 +1,5 @@
 <script setup>
-import { useAuth } from "../composables/useAuth.js";
+import { useAuth } from "../composables/index.js";
 
 const { login } = useAuth();
 </script>

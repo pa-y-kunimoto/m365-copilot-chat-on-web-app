@@ -1,7 +1,7 @@
 <script setup>
 import ChatView from "./components/ChatView.vue";
 import LoginButton from "./components/LoginButton.vue";
-import { useAuth } from "./composables/useAuth.js";
+import { useAuth } from "./composables/index.js";
 
 const { isAuthenticated } = useAuth();
 </script>

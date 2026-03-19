@@ -3,7 +3,10 @@ import { describe, expect, it, vi } from "vitest";
 import { ref } from "vue";
 import ChatView from "../components/ChatView.vue";
 
-vi.mock("../composables/useChat.js", () => ({
+vi.mock("../composables/index.js", () => ({
+  useAuth: () => ({
+    acquireToken: vi.fn().mockResolvedValue("mock-token"),
+  }),
   useChat: () => ({
     messages: ref([
       { role: "user", text: "Hello" },
@@ -13,12 +16,6 @@ vi.mock("../composables/useChat.js", () => ({
     sendMessage: vi.fn(),
     startConversation: vi.fn(),
     currentConversationId: ref("conv-1"),
-  }),
-}));
-
-vi.mock("../composables/useAuth.js", () => ({
-  useAuth: () => ({
-    acquireToken: vi.fn().mockResolvedValue("mock-token"),
   }),
 }));
 

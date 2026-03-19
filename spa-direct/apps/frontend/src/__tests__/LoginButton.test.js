@@ -4,7 +4,7 @@ import LoginButton from "../components/LoginButton.vue";
 
 const mockLogin = vi.fn();
 
-vi.mock("../composables/useAuth.js", () => ({
+vi.mock("../composables/index.js", () => ({
   useAuth: () => ({
     login: mockLogin,
   }),

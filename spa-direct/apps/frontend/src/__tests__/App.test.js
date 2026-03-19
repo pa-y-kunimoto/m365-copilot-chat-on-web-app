@@ -3,7 +3,7 @@ import { describe, expect, it, vi } from "vitest";
 import { ref } from "vue";
 import App from "../App.vue";
 
-vi.mock("../composables/useAuth.js", () => ({
+vi.mock("../composables/index.js", () => ({
   useAuth: () => ({
     isAuthenticated: ref(false),
     account: ref(null),
@@ -11,9 +11,6 @@ vi.mock("../composables/useAuth.js", () => ({
     logout: vi.fn(),
     acquireToken: vi.fn(),
   }),
-}));
-
-vi.mock("../composables/useChat.js", () => ({
   useChat: () => ({
     messages: ref([]),
     currentConversationId: ref(null),
