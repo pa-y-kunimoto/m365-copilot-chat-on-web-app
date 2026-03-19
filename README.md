@@ -47,9 +47,9 @@ m365-copilot-chat-on-web-app/
 
 | ディレクトリ名 | 説明 |
 |---------------|------|
-| `spa-direct` | フロント完結パターン。MSAL.js で Implicit Flow を使い、SPA から直接 Graph API を呼び出す |
-| `spa-pkce` | フロント完結パターン（PKCE）。MSAL.js で Authorization Code Flow with PKCE を使い、SPA から直接 Graph API を呼び出す |
-| `server-mediated` | バックエンド経由パターン。Authorization Code Flow でサーバーがトークンを管理し、Graph API を仲介呼び出し |
+| [`spa-direct`](spa-direct/) | フロント完結パターン。MSAL.js で Implicit Flow を使い、SPA から直接 Graph API を呼び出す |
+| [`spa-pkce`](spa-pkce/) | フロント完結パターン（PKCE）。MSAL.js で Authorization Code Flow with PKCE を使い、SPA から直接 Graph API を呼び出す |
+| [`server-mediated`](server-mediated/) | バックエンド経由パターン。Authorization Code Flow でサーバーがトークンを管理し、Graph API を仲介呼び出し |
 
 ### パターン比較
 
