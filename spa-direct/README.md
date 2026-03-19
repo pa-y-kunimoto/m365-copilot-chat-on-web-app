@@ -141,6 +141,22 @@ npm test --workspace=spa-direct/apps/backend
 npm test --workspace=spa-direct/apps/frontend
 ```
 
+### 4. Docker Compose で起動
+
+```bash
+cd spa-direct
+
+# .env に VITE_AZURE_CLIENT_ID, VITE_AZURE_TENANT_ID を設定済みであること
+docker compose up --build
+```
+
+| サービス | URL | 説明 |
+|---------|-----|------|
+| frontend | http://localhost:8080 | Nginx で配信される SPA |
+| backend | http://localhost:3000 | Express.js（health check） |
+
+> **Note**: フロントエンドはビルド時に `VITE_AZURE_CLIENT_ID` / `VITE_AZURE_TENANT_ID` を埋め込むため、`.env` を変更した場合は `docker compose up --build` で再ビルドが必要。
+
 ## 注意事項
 
 - Microsoft は SPA に対して Implicit Flow を **非推奨** としており、Authorization Code Flow with PKCE を推奨している
