@@ -1,0 +1,11 @@
+{
+  "name": "@m365-copilot-chat/spa-pkce",
+  "version": "0.0.1",
+  "private": true,
+  "scripts": {
+    "dev:backend": "npm run dev --workspace=spa-pkce/apps/backend",
+    "dev:frontend": "npm run dev --workspace=spa-pkce/apps/frontend",
+    "test": "npm run test --workspace=spa-pkce/apps/backend && npm run test --workspace=spa-pkce/apps/frontend",
+    "build": "npm run build --workspace=spa-pkce/apps/frontend"
+  }
+}
