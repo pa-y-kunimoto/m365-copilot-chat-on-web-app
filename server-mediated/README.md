@@ -199,6 +199,22 @@ npm test --workspace=server-mediated/apps/frontend
 
 > **Note**: フロントエンド開発サーバー (Vite) は `/auth/*` と `/api/*` をバックエンド (`http://localhost:3000`) にプロキシする設定済み。
 
+### 4. Docker Compose で起動
+
+```bash
+cd server-mediated
+
+# .env に AZURE_CLIENT_ID, AZURE_CLIENT_SECRET, AZURE_TENANT_ID を設定済みであること
+docker compose up --build
+```
+
+| サービス | URL | 説明 |
+|---------|-----|------|
+| frontend | http://localhost:8080 | Nginx（SPA 配信 + `/auth/*`, `/api/*` をバックエンドにプロキシ） |
+| backend | http://localhost:3000 | Express.js（認証 + チャット API プロキシ） |
+
+> **Note**: Azure AD のリダイレクト URI を `http://localhost:8080/auth/callback` に設定する必要がある。Nginx がフロントエンドへのリクエストと `/auth/*`, `/api/*` へのバックエンドプロキシを一元管理する。
+
 ## spa-direct パターンとの比較
 
 | 項目 | spa-direct | server-mediated |
