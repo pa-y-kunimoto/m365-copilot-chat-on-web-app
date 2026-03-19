@@ -2,7 +2,7 @@
 
 M365 Copilot Chat on Web App — monorepo
 
-同一のユースケースに対して複数の実装パターン（`patternA`, `patternB`, …）を並走させ、比較・評価するためのモノレポです。
+Microsoft Graph Copilot Chat API を利用した同一ユースケースを、複数の実装パターン（`spa-direct`, `spa-pkce`, `server-mediated`）で並走させ、比較・評価するためのモノレポです。
 
 ## 技術スタック
 
@@ -25,6 +25,16 @@ m365-copilot-chat-on-web-app/
 ├── package.json              # ルート（workspaces 定義・Volta ピン・共通スクリプト）
 ├── package-lock.json
 ├── biome.json                # Biome（lint / format）共通設定
+├── CLAUDE.md                 # Claude Code カスタム指示
+├── docs/
+│   ├── how-to-add-pattern.md # 新しいパターンの追加手順
+│   ├── research/             # API 調査資料
+│   │   └── microsoft-graph-copilot-chat-api.md
+│   └── plans/                # 実装計画
+│       └── implementation-plan.md
+├── spa-direct/               # フロント完結パターン（Implicit Flow）
+├── spa-pkce/                 # フロント完結パターン（PKCE）
+├── server-mediated/          # バックエンド経由パターン
 └── .github/
     ├── copilot-instructions.md  # GitHub Copilot カスタム指示
     ├── prompts/                 # 再利用可能なプロンプト
@@ -33,15 +43,27 @@ m365-copilot-chat-on-web-app/
         └── ci.yml            # CI パイプライン
 ```
 
-実装パターンはまだ存在しません。パターンを追加するときは、以下のような構成でルート直下にディレクトリを追加します。
+### 実装パターン
+
+| ディレクトリ名 | 説明 |
+|---------------|------|
+| `spa-direct` | フロント完結パターン。MSAL.js で Implicit Flow を使い、SPA から直接 Graph API を呼び出す |
+| `spa-pkce` | フロント完結パターン（PKCE）。MSAL.js で Authorization Code Flow with PKCE を使い、SPA から直接 Graph API を呼び出す |
+| `server-mediated` | バックエンド経由パターン。Authorization Code Flow でサーバーがトークンを管理し、Graph API を仲介呼び出し |
+
+各パターンの詳細は、パターンごとの `README.md` を参照してください。
+
+各パターンは以下の構成です。
 
 ```
-patternA/                     # 実装パターン A（例）
+<pattern-name>/               # 実装パターン（例: spa-direct）
 ├── package.json              # パターン単位のスクリプト集約
+├── .env.example              # 必要な環境変数一覧
+├── docker-compose.yml        # Docker Compose 定義
 └── apps/
-    ├── backend/              # バックエンド（例: Express.js）
+    ├── backend/              # バックエンド（Express.js）
     │   └── package.json
-    └── frontend/             # フロントエンド（例: Vue.js + Vite）
+    └── frontend/             # フロントエンド（Vue.js + Vite）
         ├── package.json
         └── vite.config.js
 ```
@@ -78,14 +100,14 @@ npm install
 特定のパターン・パッケージのみ操作したい場合は `--workspace` オプションを使います（パターンを追加した後）。
 
 ```bash
-# patternA のバックエンドをテスト（例）
-npm test --workspace=patternA/apps/backend
+# spa-direct のバックエンドをテスト（例）
+npm test --workspace=spa-direct/apps/backend
 
-# patternA のフロントエンドをテスト（例）
-npm test --workspace=patternA/apps/frontend
+# spa-direct のフロントエンドをテスト（例）
+npm test --workspace=spa-direct/apps/frontend
 
-# patternA のフロントエンド開発サーバーを起動（例）
-npm run dev --workspace=patternA/apps/frontend
+# spa-direct のフロントエンド開発サーバーを起動（例）
+npm run dev --workspace=spa-direct/apps/frontend
 ```
 
 ---
@@ -137,5 +159,8 @@ npm run format
 | ジョブ | 内容 |
 |--------|------|
 | `lint` | Biome によるコード品質チェック |
+| `test-spa-pkce-backend` | spa-pkce バックエンドのテスト |
+| `test-spa-pkce-frontend` | spa-pkce フロントエンドのテスト |
+| `build-spa-pkce-frontend` | spa-pkce フロントエンドのビルド |
 
 新しいパターンを追加したら、対応するテスト・ビルドジョブを CI に追記してください（[docs/how-to-add-pattern.md](docs/how-to-add-pattern.md) の手順 6 を参照）。

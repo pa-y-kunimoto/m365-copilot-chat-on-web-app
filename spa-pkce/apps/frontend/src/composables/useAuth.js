@@ -43,6 +43,7 @@ export function useAuth() {
       return response.accessToken;
     } catch {
       await msalInstance.acquireTokenRedirect({ scopes: graphScopes });
+      throw new Error("Redirecting for token acquisition");
     }
   }
 

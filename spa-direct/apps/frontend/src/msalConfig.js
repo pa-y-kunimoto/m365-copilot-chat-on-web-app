@@ -4,6 +4,10 @@ export const msalConfig = {
     authority: `https://login.microsoftonline.com/${import.meta.env.VITE_AZURE_TENANT_ID || "common"}`,
     redirectUri: typeof window !== "undefined" ? window.location.origin : "http://localhost:5173",
   },
+  cache: {
+    cacheLocation: "sessionStorage",
+    storeAuthStateInCookie: false,
+  },
 };
 
 export const graphScopes = [
