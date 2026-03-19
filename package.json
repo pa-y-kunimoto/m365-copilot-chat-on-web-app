@@ -1,0 +1,21 @@
+{
+  "name": "m365-copilot-chat-on-web-app",
+  "version": "0.0.1",
+  "private": true,
+  "description": "M365 Copilot Chat on Web App – monorepo",
+  "workspaces": [],
+  "scripts": {
+    "build": "npm run build --workspaces --if-present",
+    "test": "npm run test --workspaces --if-present",
+    "lint": "biome check .",
+    "lint:fix": "biome check --write .",
+    "format": "biome format --write ."
+  },
+  "volta": {
+    "node": "24.14.0",
+    "npm": "11.9.0"
+  },
+  "devDependencies": {
+    "@biomejs/biome": "1.9.4"
+  }
+}
