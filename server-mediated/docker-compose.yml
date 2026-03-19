@@ -4,11 +4,12 @@ services:
     ports:
       - "3000:3000"
     environment:
-      - AZURE_CLIENT_ID=${AZURE_CLIENT_ID}
-      - AZURE_CLIENT_SECRET=${AZURE_CLIENT_SECRET}
-      - AZURE_TENANT_ID=${AZURE_TENANT_ID}
+      - AZURE_CLIENT_ID=${AZURE_CLIENT_ID:-mock-client-id}
+      - AZURE_CLIENT_SECRET=${AZURE_CLIENT_SECRET:-mock-client-secret}
+      - AZURE_TENANT_ID=${AZURE_TENANT_ID:-mock-tenant-id}
       - SESSION_SECRET=${SESSION_SECRET:-dev-secret}
       - REDIRECT_URI=${REDIRECT_URI:-http://localhost:8080/auth/callback}
+      - MOCK_MODE=${MOCK_MODE:-true}
 
   frontend:
     build: ./apps/frontend

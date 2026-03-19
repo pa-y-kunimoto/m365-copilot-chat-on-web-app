@@ -1,3 +1,8 @@
+if (process.env.MOCK_MODE === "true") {
+  const { startMockServer } = await import("./mocks/setup.js");
+  startMockServer();
+}
+
 import { createApp } from "./app.js";
 
 const PORT = process.env.PORT || 3000;
