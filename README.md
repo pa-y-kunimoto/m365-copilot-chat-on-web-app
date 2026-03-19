@@ -51,6 +51,20 @@ m365-copilot-chat-on-web-app/
 | `spa-pkce` | フロント完結パターン（PKCE）。MSAL.js で Authorization Code Flow with PKCE を使い、SPA から直接 Graph API を呼び出す |
 | `server-mediated` | バックエンド経由パターン。Authorization Code Flow でサーバーがトークンを管理し、Graph API を仲介呼び出し |
 
+### パターン比較
+
+|  | `spa-direct` | `spa-pkce` | `server-mediated` |
+|--|:---:|:---:|:---:|
+| **認証フロー** | Implicit Flow | Authorization Code Flow with PKCE | Authorization Code Flow |
+| **認証ライブラリ** | `@azure/msal-browser` | `@azure/msal-browser` | `@azure/msal-node` |
+| **トークン保持** | ブラウザ（sessionStorage） | ブラウザ（sessionStorage） | サーバーセッション |
+| **Graph API 呼び出し** | フロントエンドから直接 | フロントエンドから直接 | バックエンド経由（プロキシ） |
+| **Client Secret** | 不要 | 不要 | 必要 |
+| **トークンリフレッシュ** | hidden iframe（制約あり） | MSAL が自動管理 | サーバー側で実施 |
+| **セキュリティ** | トークンがブラウザに露出 | PKCE でトークン取得を保護 | トークンがクライアントに露出しない |
+| **Microsoft 推奨** | 非推奨（SPA 向け） | 推奨（SPA 向け） | 推奨（機密クライアント） |
+| **実装の複雑さ** | 低 | 低〜中 | 中〜高 |
+
 各パターンの詳細は、パターンごとの `README.md` を参照してください。
 
 各パターンは以下の構成です。
